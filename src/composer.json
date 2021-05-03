@@ -1,0 +1,19 @@
+{
+    "name": "atlas/memcached",
+    "require": {},
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AtlasComp",
+            "email": "web.dev89@yandex.by",
+            "homepage": "https://github.com/doroshuk89"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Core\\": "app/Core",
+            "Model\\": "app/Model",
+            "Controller\\": "app/Controller"   
+        }
+    }
+}
