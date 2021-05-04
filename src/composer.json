@@ -13,7 +13,8 @@
         "psr-4": {
             "Core\\": "app/Core",
             "Model\\": "app/Model",
-            "Controller\\": "app/Controller"   
+            "Controller\\": "app/Controller",
+            "Library\\": "app/Library"  
         }
     }
 }
