@@ -15,45 +15,49 @@ require_once 'vendor/autoload.php';
 //Данные подключений к БД и Memcached
 require_once 'config/config.php';
 
-//Время выполнения скрипка и значение потребляемой памяти
-//\Library\Timer::start();
-
-
 \Library\UsageMemory::start();
+$time_load_page = \Library\Timer::getInstanse('start');
 
 try{
-    $time_load_page = \Library\Timer::getInstanse('start');
     $connect_object = \Core\ConnectDB::getInstance(['host' => HOST, 'dbname'=>DBNAME, 'user'=>USER, 'password' => PASSWORD]);
     $connect = $connect_object->getConnect();
-    
     //Драйвер для работы с mysql
     $driver = new \Core\DriverDB ($connect);
+    //Memcached
+    $memcached = \Core\ConnectMemcached::getInstance(['host'=>MEMCACHED, 'port'=> 11211]);
+    $con = $memcached->getMemcached();
     //Модель
-    $model = new \Model\Model($driver);
+    $model = new \Model\Model($driver, $con);
+    
+    
 } 
 catch (\Exception $e) {
     echo $e->getMessage();
 } 
 
 
-
-
-
 for ($i = 0; $i < 2000000; $i++) {
     $array[] = rand(0, 1000000);
 }
-$sql = "select * from wp_posts";
-$driver->query($sql, 'arraydata');
-$driver->query($sql, 'count');
+
+try{
+        $model->getPosts();
+        $model->getPosts();
+        $model->getPosts();
+        $model->getPosts();
+        $model->addTerm('ad','add');
+} catch(\PDOException $e)
+{
+    echo $e->getMessage()."<br>";
+    
+}
 
 
 //Количество запросов в БД, время генерации страницы и потребляемая память
 echo "Количество запросов к БД - ".$driver->getCountQuery()."<br>";
-echo $time_load_page->finish()." сек<br>";
 echo "Потребляемая память - ". \Library\UsageMemory::finish_memory()."<br>";
-echo "<br>";
-echo (\Library\UsageMemory::finish_peak_memory())." байт <br>";
-
-
-echo $driver->getTimeQuery()."<br>";
-print_r($driver->getArraySql());
+echo "максимальное значение памяти " .(\Library\UsageMemory::finish_peak_memory())." байт <br>";
+//Время выполения всех sql запросов
+echo "Время выполения всех sql запросов - ". $driver->getTimeQuery()."<br>";
+//Время генерации страницы
+echo "Время генерации страницы - ".$time_load_page->finish()." сек<br>";

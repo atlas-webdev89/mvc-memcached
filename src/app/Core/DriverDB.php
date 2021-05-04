@@ -10,7 +10,7 @@ class DriverDB {
     protected $time_query = 0;
     
     protected $object_time;
-    protected $array = [];
+    protected $sqlDatatime = [];
 
     public function __construct($pdo) {
         if (isset ($pdo)){
@@ -28,6 +28,11 @@ class DriverDB {
     public function getTimeQuery () {
         return $this->time_query;
     }
+    
+    //Функция получения массива всех запросов
+    public function getArraySql () {
+        return $this->sqlDatatime;
+    }
 
     public function query ($sql, $type, array $data = NULL){ 
         
@@ -38,20 +43,19 @@ class DriverDB {
             case 'arraydata':                
                     $row =  self::$db->prepare($sql);
                     $row->execute($data);
-                    
-                    $this->er($sql);
-                    
+                    $this->timeQueryAll()->addDataTime($sql);
                 return $row->fetchAll();
                 break;
             case 'count':                
                     $row =  self::$db->prepare($sql);
                     $row->execute($data);
-                    $this->er($sql);
+                    $this->timeQueryAll()->addDataTime($sql);
                 return $row->rowCount();
                 break;
             case 'insert':
                     $row = self::$db->prepare($sql);
                     $row->execute($data);
+                    $this->timeQueryAll()->addDataTime($sql);
                 return self::$db->lastInsertId();
                 break;
         }
@@ -59,12 +63,18 @@ class DriverDB {
        
     }
     
-    protected function er ($sql) {
-        $this->array[][$sql] = $this->object_time->finish();
-            $this->time_query +=$this->object_time->finish();
+    //Функция суммирования времени выполнения всех запросов к БД
+    protected function timeQueryAll () {
+                $this->time_query +=$this->object_time->finish();
+            return $this;
     }
     
-    public function getArraySql () {
-        return $this->array;
+    //Функция формирования массива выполненных запросов и затраченного времени
+    protected function addDataTime($sql) {
+            $this->sqlDatatime[][$sql] = $this->object_time->finish();
+         return $this;
     }
+
+
+    
 }
