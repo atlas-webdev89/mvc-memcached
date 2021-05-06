@@ -45,14 +45,17 @@ class Data {
     //Посредник для выполения запросов на получение данных
     public function query($query, array $params = null, $cache = '') {
             
-        if($cache != '' && $cache == 'cache') {
+        if($cache == 'cache') {
                 $key =  "KEY".md5($query.$this->controller);
-                
+                echo $key."<br>";
                         $time_cache = \Library\Timer::getInstanse('start');
-                            if($cash = $this->memcached->get($key)){
-                                return $cash;
-                            }
-                        echo $time_cache->finish();
+                            $cash = $this->memcached->get($key);
+                             echo $time_cache->finish()."<br>";
+                                if(isset($cash) && !empty($cash)){
+                                   
+                                    return $cash;
+                                }
+                        
 
                         $data = $this->model->$query($params);
                    $this->memcached->set($key, $data);

@@ -32,8 +32,8 @@ try{
          $data = $re->get_posts();
           $data = $re->get_posts();
          
-         $data = $re->get_pages(123);
-          $data = $re->get_pages(231);
+         $data = $re->get_pages(124);
+          $data = $re->get_pages(124);
           $data = $re->get_pages(124);
     
 }  catch (\Exception $e) {
