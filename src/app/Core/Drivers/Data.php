@@ -13,12 +13,7 @@ class Data {
         $this->driverDB = $container['driverDB'];
        // $this->getMemcache();
     }
-
     
-    public function getMemcache() {
-       $obj = \Core\Connect\ConnectMemcached::getInstance(MEMCACHED);
-                     $this->memcached = $obj->getMemcached();
-    }
     //Получение объекта модели для текущего контроллера
     public function addModelController ($controller) {
                 if(isset($controller) && !empty($controller)) {
@@ -44,24 +39,16 @@ class Data {
     
     //Посредник для выполения запросов на получение данных
     public function query($query, array $params = null, $cache = '') {
-            
         if($cache == 'cache') {
                 $key =  "KEY".md5($query.$this->controller);
-                echo $key."<br>";
-                        $time_cache = \Library\Timer::getInstanse('start');
                             $cash = $this->memcached->get($key);
-                             echo $time_cache->finish()."<br>";
                                 if(isset($cash) && !empty($cash)){
-                                   
                                     return $cash;
                                 }
-                        
-
                         $data = $this->model->$query($params);
-                   $this->memcached->set($key, $data);
+                   if($data) $this->memcached->set($key, $data);
                 return $data;
             }
-            
         return $this->model->$query($params);
     }
     
