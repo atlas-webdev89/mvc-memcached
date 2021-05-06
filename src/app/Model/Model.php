@@ -8,7 +8,7 @@ class Model {
     protected $memcached;
 
 
-    public function __construct($driver, $memcached) {
+    public function __construct($driver, $memcached = null) {
         $this->driver = $driver;     
         $this->memcached = $memcached;
     }
@@ -17,12 +17,19 @@ class Model {
             $type = 'arraydata';
             $sql = "select * from wp_posts";
             
-            $queryKey = 'KEY'.md5($sql);
-                    if($cash = $this->memcached->get($queryKey)) {
-                        return $cash;
-                    }
+           
                 $result =  $this->driver->query($sql, $type);
-            if($result) $this->memcached->set($queryKey, $result);
+           
+        return $result;
+    }
+    
+    public function getPosts2 () {
+            $type = 'arraydata';
+            $sql = "select * from wp_posts";
+            
+            
+                $result =  $this->driver->query($sql, $type);
+          
         return $result;
     }
     

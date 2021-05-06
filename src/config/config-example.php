@@ -7,4 +7,4 @@ define('USER', '');
 define('PASSWORD', '');
 
 //Данные для подключения к  Memcached
-define('MEMCACHED', '');
+define('MEMCACHED', []);

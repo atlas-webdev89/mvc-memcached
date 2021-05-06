@@ -23,13 +23,15 @@ try{
     $connect = $connect_object->getConnect();
     //Драйвер для работы с mysql
     $driver = new \Core\DriverDB ($connect);
-    //Memcached
-    $memcached = \Core\ConnectMemcached::getInstance(['host'=>MEMCACHED, 'port'=> 11211]);
-    $con = $memcached->getMemcached();
+    if(defined('MEMCACHED') && !empty(MEMCACHED)) 
+    {
+        //Memcached
+        $memcached = \Core\ConnectMemcached::getInstance(MEMCACHED);
+        $con = $memcached->getMemcached();
+    }
     //Модель
-    $model = new \Model\Model($driver, $con);
-    
-    
+    $model = new \Model\Model($driver);
+  
 } 
 catch (\Exception $e) {
     echo $e->getMessage();
@@ -42,10 +44,10 @@ for ($i = 0; $i < 2000000; $i++) {
 
 try{
         $model->getPosts();
+        $model->getPosts2();
         $model->getPosts();
-        $model->getPosts();
-        $model->getPosts();
-        $model->addTerm('ad','add');
+        $model->getPosts2();
+        //$model->addTerm('ad','add');
 } catch(\PDOException $e)
 {
     echo $e->getMessage()."<br>";

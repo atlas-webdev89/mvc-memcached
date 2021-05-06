@@ -17,8 +17,7 @@ class ConnectMemcached {
             return self::$_memcached;
         }
         
-        $memcached = new \Memcached();
-        $memcached->addServer($connect['host'], $connect['port']);
+        $memcached = $this->createMemcacheServers($connect);
             
         if($memcached instanceof \Memcached) {
                 self::$_memcached = $memcached;
@@ -34,7 +33,16 @@ class ConnectMemcached {
         return self::$_instance;
         
     }
+    
     public function getMemcached() {
         return self::$_memcached;
+    }
+    
+    //Создание пула серверов Memcached
+    private function createMemcacheServers (array $cluster) {
+            $memcached = new \Memcached();
+            $memcached->setOption(\Memcached::OPT_DISTRIBUTION, \Memcached::DISTRIBUTION_CONSISTENT);
+            $memcached->addServers($cluster);
+        return $memcached;
     }
 }

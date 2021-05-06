@@ -34,33 +34,33 @@ class DriverDB {
         return $this->sqlDatatime;
     }
 
-    public function query ($sql, $type, array $data = NULL){ 
-        
-        $this->count_sql++;
-        $this->object_time=\Library\Timer::getInstanse('start');
-        
+    protected function queryBD ($sql, $type, array $data = NULL){ 
         switch ($type){
             case 'arraydata':                
                     $row =  self::$db->prepare($sql);
                     $row->execute($data);
-                    $this->timeQueryAll()->addDataTime($sql);
                 return $row->fetchAll();
                 break;
             case 'count':                
                     $row =  self::$db->prepare($sql);
                     $row->execute($data);
-                    $this->timeQueryAll()->addDataTime($sql);
                 return $row->rowCount();
                 break;
             case 'insert':
                     $row = self::$db->prepare($sql);
                     $row->execute($data);
-                    $this->timeQueryAll()->addDataTime($sql);
                 return self::$db->lastInsertId();
                 break;
         }
-        
-       
+    }
+    
+    //Функция посредник определяет время выполнения всех sql запросов
+    public function query($sql, $type, array $data = NULL) {
+            $this->count_sql++;
+            $this->object_time=\Library\Timer::getInstanse('start');
+                $result = $this->queryBD($sql,$type,$data);
+            $this->timeQueryAll()->addDataTime($sql);
+        return $result;
     }
     
     //Функция суммирования времени выполнения всех запросов к БД

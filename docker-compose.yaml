@@ -13,7 +13,9 @@ services:
             DB_DB: mem
             DB_USER: user
             DB_PASS: user
-            MEMCACHED: memcached
+            MEMCACHED_1: memcached-1
+            MEMCACHED_2: memcached-2
+            MEMCACHED_3: memcached-3
         volumes:
           - ./src/:/var/www/html
         depends_on:
@@ -21,9 +23,21 @@ services:
         networks:
           - memcachedLinks
           
-    memcached:
+    memcached-1:
         image: memcached
-        container_name: Memcached
+        container_name: Memcached-1
+        restart: always
+        networks:
+          - memcachedLinks
+    memcached-2:
+        image: memcached
+        container_name: Memcached-2
+        restart: always
+        networks:
+          - memcachedLinks
+    memcached-3:
+        image: memcached
+        container_name: Memcached-3
         restart: always
         networks:
           - memcachedLinks
