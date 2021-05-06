@@ -18,48 +18,24 @@ require_once 'config/config.php';
 \Library\UsageMemory::start();
 $time_load_page = \Library\Timer::getInstanse('start');
 
-try{
-    $connect_object = \Core\ConnectDB::getInstance(['host' => HOST, 'dbname'=>DBNAME, 'user'=>USER, 'password' => PASSWORD]);
-    $connect = $connect_object->getConnect();
-    //Драйвер для работы с mysql
-    $driver = new \Core\DriverDB ($connect);
-    if(defined('MEMCACHED') && !empty(MEMCACHED)) 
-    {
-        //Memcached
-        $memcached = \Core\ConnectMemcached::getInstance(MEMCACHED);
-        $con = $memcached->getMemcached();
-    }
-    //Модель
-    $model = new \Model\Model($driver);
-  
-} 
-catch (\Exception $e) {
-    echo $e->getMessage();
-} 
-
-
 for ($i = 0; $i < 2000000; $i++) {
     $array[] = rand(0, 1000000);
 }
 
 try{
-        $model->getPosts();
-        $model->getPosts2();
-        $model->getPosts();
-        $model->getPosts2();
-        //$model->addTerm('ad','add');
-} catch(\PDOException $e)
-{
-    echo $e->getMessage()."<br>";
-    
+$re = new \Controller\IndexController();
+$re->execute();
+$data = $re->get_posts();
+echo ($data);
+}  catch (\Exception $e) {
+    echo $e->getMessage();
 }
 
-
 //Количество запросов в БД, время генерации страницы и потребляемая память
-echo "Количество запросов к БД - ".$driver->getCountQuery()."<br>";
+//echo "Количество запросов к БД - ".$driver->getCountQuery()."<br>";
 echo "Потребляемая память - ". \Library\UsageMemory::finish_memory()."<br>";
 echo "максимальное значение памяти " .(\Library\UsageMemory::finish_peak_memory())." байт <br>";
 //Время выполения всех sql запросов
-echo "Время выполения всех sql запросов - ". $driver->getTimeQuery()."<br>";
+//echo "Время выполения всех sql запросов - ". $driver->getTimeQuery()."<br>";
 //Время генерации страницы
 echo "Время генерации страницы - ".$time_load_page->finish()." сек<br>";

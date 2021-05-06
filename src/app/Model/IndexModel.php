@@ -2,24 +2,18 @@
 
 namespace Model;
 
-class Model {
+class IndexModel extends \Core\Model\MainModel{
     
     protected $driver;
-    protected $memcached;
 
-
-    public function __construct($driver, $memcached = null) {
-        $this->driver = $driver;     
-        $this->memcached = $memcached;
+    public function __construct($driver) {
+        $this->driver = $driver;
     }
     
     public function getPosts () {
             $type = 'arraydata';
             $sql = "select * from wp_posts";
-            
-           
-                $result =  $this->driver->query($sql, $type);
-           
+            $result =  $this->driver->query($sql, $type);
         return $result;
     }
     
