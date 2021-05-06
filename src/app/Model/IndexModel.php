@@ -17,7 +17,7 @@ class IndexModel extends \Core\Model\MainModel{
         return $result;
     }
     
-    public function getPosts2 () {
+    public function getPages () {
             $type = 'arraydata';
             $sql = "select * from wp_posts";
             

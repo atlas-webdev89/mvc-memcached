@@ -5,37 +5,21 @@ namespace Core\Drivers;
 class Data {
     protected $memcached;
     protected $model;
-    protected $connectDB;
     protected $driverDB;
     protected $controller;
 
-
-    public function __construct () {
-        $this->getConnectMysql();
-        $this->getDriverDB();
-        $this->getMemcached();
-        
-    }
-    
-    
-    protected function getMemcached () {
-        if(defined('MEMCACHED')) 
-            {
-                //Memcached
-                $memcached = \Core\Connect\ConnectMemcached::getInstance(MEMCACHED);
-                $this->memcached = $memcached->getMemcached();
-            }
-    }
-    
-    protected function getDriverDB () {
-        $this->driverDB = new \Core\Drivers\DriverDB ($this->connectDB);
+    public function __construct ($container) {
+        $this->memcached = $container['driverMemcached'];
+        $this->driverDB = $container['driverDB'];
+       // $this->getMemcache();
     }
 
-    protected function getConnectMysql () {
-        $connect_object = \Core\Connect\ConnectDB::getInstance(['host' => HOST, 'dbname'=>DBNAME, 'user'=>USER, 'password' => PASSWORD]);
-        $this->connectDB = $connect_object->getConnect();
-    }
     
+    public function getMemcache() {
+       $obj = \Core\Connect\ConnectMemcached::getInstance(MEMCACHED);
+                     $this->memcached = $obj->getMemcached();
+    }
+    //Получение объекта модели для текущего контроллера
     public function addModelController ($controller) {
                 if(isset($controller) && !empty($controller)) {
                     $this->controller = $controller;
@@ -58,11 +42,28 @@ class Data {
                 }
     }
     
-    public function query($query, array $params =null, $cache ='') {
+    //Посредник для выполения запросов на получение данных
+    public function query($query, array $params = null, $cache = '') {
+            
         if($cache != '' && $cache == 'cache') {
-            echo "KEY".md5($query.$this->controller);
-        }
-        
+                $key =  "KEY".md5($query.$this->controller);
+                
+                        $time_cache = \Library\Timer::getInstanse('start');
+                            if($cash = $this->memcached->get($key)){
+                                return $cash;
+                            }
+                        echo $time_cache->finish();
+
+                        $data = $this->model->$query($params);
+                   $this->memcached->set($key, $data);
+                return $data;
+            }
+            
+        return $this->model->$query($params);
+    }
+    
+    //Запросы в БД без кеширования
+    public function queryNoCache ($query, array $params =null) {
         return $this->model->$query($params);
     }
     

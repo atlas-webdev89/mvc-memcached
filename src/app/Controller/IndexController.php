@@ -6,8 +6,8 @@ use Core\Controller\DisplayController;
 
 class IndexController extends DisplayController {
 
-    public function __construct() {
-       parent::__construct();
+    public function __construct($container) {
+       parent::__construct($container);
             $this->data->addModelController(__CLASS__);
     }
     

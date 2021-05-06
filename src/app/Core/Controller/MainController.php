@@ -7,7 +7,7 @@ abstract class MainController {
     
     public $data;
     
-    public function __construct() {
-        $this->data=new \Core\Drivers\Data();
+    public function __construct($container) {
+        $this->data=$container['dataObject'];
     } 
 }

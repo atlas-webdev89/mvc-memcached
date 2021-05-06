@@ -30,8 +30,7 @@ class ConnectMemcached {
             if(self::$_instance === null){
                 self::$_instance = new self($connect);
             }
-        return self::$_instance;
-        
+        return self::$_instance;   
     }
     
     public function getMemcached() {
@@ -42,6 +41,9 @@ class ConnectMemcached {
     private function createMemcacheServers (array $cluster) {
             $memcached = new \Memcached();
             $memcached->setOption(\Memcached::OPT_DISTRIBUTION, \Memcached::DISTRIBUTION_CONSISTENT);
+            $memcached->setOption(\Memcached::OPT_SERVER_FAILURE_LIMIT, 2);
+            $memcached->setOption(\Memcached::OPT_REMOVE_FAILED_SERVERS, true);
+            $memcached->setOption(\Memcached::OPT_TCP_NODELAY, false);
             $memcached->addServers($cluster);
         return $memcached;
     }
