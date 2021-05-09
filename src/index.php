@@ -35,6 +35,7 @@ try{
          $data = $re->get_pages(124);
           $data = $re->get_pages(124);
           $data = $re->get_pages(124);
+          $data = $re->get_pages(124);
     
 }  catch (\Exception $e) {
         echo $e->getMessage();

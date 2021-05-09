@@ -58,6 +58,36 @@ services:
           - MysqlMemcached:/var/lib/mysql
         networks:
           - memcachedLinks
+          
+    db-slave:
+        image: mysql:5.7
+        container_name: MysqlMemcachedSlave
+        restart: always
+        ports:
+          - 8907:3306
+        environment:
+          MYSQL_USER: slave
+          MYSQL_PASSWORD: slave
+          MYSQL_ROOT_PASSWORD: root
+        volumes:
+          - MysqlSlave:/var/lib/mysql
+        networks:
+          - memcachedLinks
+    
+    db-slave-2:
+        image: mysql:5.7
+        container_name: MysqlMemcachedSlave2
+        restart: always
+        ports:
+          - 8908:3306
+        environment:
+          MYSQL_USER: slave
+          MYSQL_PASSWORD: slave
+          MYSQL_ROOT_PASSWORD: root
+        volumes:
+          - MysqlSlave2:/var/lib/mysql
+        networks:
+          - memcachedLinks      
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
@@ -78,3 +108,5 @@ networks:
 
 volumes:
   MysqlMemcached:
+  MysqlSlave:
+  MysqlSlave2:
